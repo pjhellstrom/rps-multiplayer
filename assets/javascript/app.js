@@ -233,15 +233,25 @@ db.ref("/game").on("value", function(snap) {
                 return;
             };
             if (winA === 5) {
-                alert("Player A is the winner!");
+                setFirebase('gamePrompt/', `${playerAname} wins it all!`);
                 resetFirebase();
+                statusChecked = false;
+                inputChecked = false;
             }
             else if (winB === 5) {
-                alert("Player B is the winner!");
-                resetFirebase();  
+                setFirebase('gamePrompt/', `${playerBname} wins it all!`);
+                resetFirebase();
+                statusChecked = false;
+                inputChecked = false;
             }
         };//end evaluateGame
 
+        //Reset listener
+        $("#resetBtn").on("click", function() {
+            resetFirebase();
+            statusChecked = false;
+            inputChecked = false;
+        });
     });//end jQuery ready
     
 });//end call-back

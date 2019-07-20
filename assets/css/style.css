@@ -96,3 +96,15 @@ body {
         border-top-right-radius: 8px;
         padding: 10px;
     }
+
+    #resetBtn {
+        max-width: 250px;
+        padding: 20px;
+        background-color: yellowgreen;
+        color: white;
+        cursor: pointer;
+    }
+
+    #resetBtn:hover {
+        background-color: rgb(108, 139, 46);
+    }
