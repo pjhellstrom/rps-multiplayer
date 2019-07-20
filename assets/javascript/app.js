@@ -13,31 +13,33 @@ let inputChecked = false;
 
 let emptyGame = {
     playerA: { 
-    status: 0,
-    name: "Waiting for player",
-    currentSelection: "",
-    wins: 0,
-    losses: 0,
+        status: 0,
+        name: "Waiting for player",
+        currentSelection: "",
+        wins: 0,
+        losses: 0,
     },
     playerB: { 
-    status: 0,
-    name: "Waiting for player",
-    currentSelection: "",
-    wins: 0,
-    losses: 0,
-    }
+        status: 0,
+        name: "Waiting for player",
+        currentSelection: "",
+        wins: 0,
+        losses: 0,
+    },
+    gamePrompt: "Waiting for players to join",
+    chatBox: []
 };
 
 //Connect to Firebase
 // Your web app's Firebase configuration
 var config = {
-apiKey: "AIzaSyBfGy7mgz8Mm8TtBGB9_Seg2Zet_bI4cDM",
-authDomain: "my-bootcamp-project-a1f8f.firebaseapp.com",
-databaseURL: "https://my-bootcamp-project-a1f8f.firebaseio.com",
-projectId: "my-bootcamp-project-a1f8f",
-storageBucket: "my-bootcamp-project-a1f8f.appspot.com",
-messagingSenderId: "775630397577",
-appId: "1:775630397577:web:0711d0063acc3ed5"
+    apiKey: "AIzaSyBfGy7mgz8Mm8TtBGB9_Seg2Zet_bI4cDM",
+    authDomain: "my-bootcamp-project-a1f8f.firebaseapp.com",
+    databaseURL: "https://my-bootcamp-project-a1f8f.firebaseio.com",
+    projectId: "my-bootcamp-project-a1f8f",
+    storageBucket: "my-bootcamp-project-a1f8f.appspot.com",
+    messagingSenderId: "775630397577",
+    appId: "1:775630397577:web:0711d0063acc3ed5"
 };
 
 // Initialize Firebase
@@ -46,7 +48,34 @@ firebase.initializeApp(config);
 // Create a variable to reference the database.
 var db = firebase.database();
 
-//Call-back that runs to update with values in Firebase game-node
+//Chatbox call-back
+db.ref("/game/chatBox").on("value", function(snap) {
+    snap.forEach(function(snap1) {
+        var chatMsg = snap1.val();
+        chatBox.push(chatMsg);
+    console.log(snap1.val());
+    });
+    for (var i = 0; i < chatBox; i++) {
+        chatBox.push(chatBox[i]);
+        //Update DOM
+        $("#chatBox").html(chatBox);
+    }
+    //Initialize jQuery
+    $(document).ready(function() {
+        chatListener();
+
+        function chatListener() {
+            $("#chatSend").on("click", function() {
+                var chatKey = db.ref("/game/chatBox/").push($("#chatInput").val());
+                console.log(chatKey);
+                debugger;
+                $("#chatInput").val("");
+            });
+        };//end chatListener()    
+    });//end jQuery
+});//end Chatbox call-back
+
+//Call-back that runs to update in parallel with values in Firebase game-node
 db.ref("/game").on("value", function(snap) {
     console.log(snap.val());
 
@@ -61,6 +90,7 @@ db.ref("/game").on("value", function(snap) {
     winB = snap.val().playerB.wins;
     lossA = snap.val().playerA.losses;
     lossB = snap.val().playerB.losses;
+    gamePrompt = snap.val().gamePrompt;
 
     //Keep DOM updated with Firebase
     $("#playerA-name").text(playerAname);
@@ -69,24 +99,24 @@ db.ref("/game").on("value", function(snap) {
     $("#bWinCount").text(winB);
     $("#aLossCount").text(lossA);
     $("#bLossCount").text(lossB);
+    $("#gamePrompt").text(gamePrompt);
     
 
     //Initialize jQuery
     $(document).ready(function() {
 
         if (!statusChecked) {
-            availabilityLogic()
+            availabilityLogic();
         };
         if (!inputChecked) {
             inputListener();
-        }
-        evaluateGame();
+        };
 
-        updateDOM();
+        evaluateGame();
 
         function availabilityLogic() {
             if (statusA !== 0 && statusB !== 0) {
-                $("#gamePrompt").text("Sorry, no spots are free for play now!");
+                setFirebase('gamePrompt/', `Game is currently full`);
             }
             else if (statusA == 0) {
                 //playerA is available - set up new player here
@@ -113,16 +143,16 @@ db.ref("/game").on("value", function(snap) {
             if ($(this).attr("player") === "A") {
                 //Update firebase with selection
                 setFirebase('playerA/currentSelection', $(this).attr("data"));
+                setFirebase('gamePrompt/', `${playerAname} has made a selection`)
                 console.log(selectionA);
-                alert("Your pick was registered, wait for other player's move.")
             }
             //If player B is making selection
             else {
                 //Save player's selection and set to firebase
                 //Update firebase with selection
                 setFirebase('playerB/currentSelection', $(this).attr("data"));
+                setFirebase('gamePrompt/', `${playerBname} has made a selection`)
                 console.log(selectionB);
-                alert("Your pick was registered, wait for other player's move.")
             };
             setTimeout(evaluatePicks, 100);
             });
@@ -136,7 +166,7 @@ db.ref("/game").on("value", function(snap) {
                 if (selectionA === selectionB) {
                     setFirebase('playerA/currentSelection', "");
                     setFirebase('playerB/currentSelection', "");
-                    alert("It's a tie, play again!");
+                    setFirebase('gamePrompt/', `It's a tie! Make another move.`)
                 }
                 else if (selectionA === "R" && selectionB === "P") {
                     setFirebase('playerA/currentSelection', "");
@@ -145,7 +175,7 @@ db.ref("/game").on("value", function(snap) {
                     setFirebase('playerA/losses', lossA);
                     winB++;
                     setFirebase('playerB/wins', winB);
-                    alert("Player B wins!");
+                    setFirebase('gamePrompt/', `${playerBname} wins this round!`)
                 }        
                 else if (selectionA === "R" && selectionB === "S") {
                     setFirebase('playerA/currentSelection', "");
@@ -154,7 +184,7 @@ db.ref("/game").on("value", function(snap) {
                     setFirebase('playerA/wins', winA);
                     lossB++;
                     setFirebase('playerB/losses', lossB);
-                    alert("Player A wins!");
+                    setFirebase('gamePrompt/', `${playerAname} wins this round!`)
                 }
                 else if (selectionA === "P" && selectionB === "R") {
                     setFirebase('playerA/currentSelection', "");
@@ -163,7 +193,7 @@ db.ref("/game").on("value", function(snap) {
                     setFirebase('playerA/wins', winA);
                     lossB++;
                     setFirebase('playerB/losses', lossB);
-                    alert("Player A wins!");
+                    setFirebase('gamePrompt/', `${playerAname} wins this round!`)
                 }        
                 else if (selectionA === "P" && selectionB === "S") {
                     setFirebase('playerA/currentSelection', "");
@@ -172,7 +202,7 @@ db.ref("/game").on("value", function(snap) {
                     setFirebase('playerA/losses', lossA);
                     winB++;
                     setFirebase('playerB/wins', winB);
-                    alert("Player B wins!");
+                    setFirebase('gamePrompt/', `${playerBname} wins this round!`)
                 }
                 else if (selectionA === "S" && selectionB === "R") {
                     setFirebase('playerA/currentSelection', "");
@@ -181,7 +211,7 @@ db.ref("/game").on("value", function(snap) {
                     setFirebase('playerA/losses', lossA);
                     winB++;
                     setFirebase('playerB/wins', winB);
-                    alert("Player B wins!");
+                    setFirebase('gamePrompt/', `${playerBname} wins this round!`)
                 }        
                 else if (selectionA === "S" && selectionB === "P") {
                     setFirebase('playerA/currentSelection', "");
@@ -190,7 +220,7 @@ db.ref("/game").on("value", function(snap) {
                     setFirebase('playerA/wins', winA);
                     lossB++;
                     setFirebase('playerB/losses', lossB);
-                    alert("Player A wins!");
+                    setFirebase('gamePrompt/', `${playerAname} wins this round!`)
                 };
 
                 $("#aPick").text("");
@@ -214,7 +244,6 @@ db.ref("/game").on("value", function(snap) {
 
     });//end jQuery ready
     
-
 });//end call-back
 
 function setFirebase(child,data) {

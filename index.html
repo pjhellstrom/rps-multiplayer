@@ -15,10 +15,19 @@
 <body>
     
 <header>
-    <h1>Rock Paper Scissors</h1>
+    <h1>Multiplayer - Rock Paper Scissors</h1>
 </header>
 
 <main id="mainContainer">
+        <div id="promptContainer">
+            <div class="promptHeader">
+                <h2>Game Status</h2>
+            </div>
+            <div id="playerSelections">
+                <div id="gamePrompt"></div>
+            </div>
+        </div>
+
     <div id="playerContainer">
         <div id="aContainer">
             <div class="gameHeader">
@@ -34,15 +43,6 @@
                 <div data="S" player="A" class="selectionBtn" id="aSelectS">
                     <i class="far fa-hand-scissors"></i> SCISSORS
                 </div>
-            </div>
-        </div>
-
-        <div id="bContainer">
-            <div class="gameHeader">
-                <h2>Status</h2>
-            </div>
-            <div id="playerSelections">
-                <div id="gamePrompt"></div>
             </div>
         </div>
 
@@ -83,10 +83,15 @@
         </div>
         <div id="chatWrapper">
             <h2 class="statsHeader">Let's Chat</h2>
+            <div id="chatBox">
+                Chat in here
+            </div>
+            <div id="input-row">
+                <input id="chatInput"></input>
+                <button id="chatSend">></button>
+            </div>
         </div>
     </div>
-
-    <button id="newGameBtn">Click new Game</button>
 
 </main>
 

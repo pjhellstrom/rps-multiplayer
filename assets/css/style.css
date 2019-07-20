@@ -14,10 +14,25 @@ body {
     text-align: center;
 }
 
+#promptContainer {
+    margin: 20px;
+    border: rgba(255, 255, 255, .2);
+    box-shadow: 0 1px 3px 1px rgba(60, 64, 67, .3);
+    border-radius: 8px;
+}
+
+.promptHeader {
+    background-color: rgb(1, 91, 133);
+    color: #FFF;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 10px;
+}
+
 #playerContainer {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
 }
 
     #aContainer, #bContainer {
@@ -25,10 +40,11 @@ body {
         border: rgba(255, 255, 255, .2);
         box-shadow: 0 1px 3px 1px rgba(60, 64, 67, .3);
         border-radius: 8px;
+        min-width: 300px;
     }
 
     .gameHeader {
-        background-color: #009CE5;
+        background-color: rgb(1, 91, 133);
         color: #FFF;
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
