@@ -10,6 +10,7 @@ let lossB = 0;
 let chatBox = [];
 let statusChecked = false;
 let inputChecked = false;
+let currentPlayerName = "";
 
 let emptyGame = {
     playerA: { 
@@ -50,28 +51,36 @@ var db = firebase.database();
 
 //Chatbox call-back
 db.ref("/game/chatBox").on("value", function(snap) {
+    chatBox = [];
     snap.forEach(function(snap1) {
+        // debugger;
         var chatMsg = snap1.val();
+        // debugger;
         chatBox.push(chatMsg);
-    console.log(snap1.val());
+        console.log(snap1.val());
     });
-    for (var i = 0; i < chatBox; i++) {
-        chatBox.push(chatBox[i]);
+    $("#chatBox").text("")
+    for (var i = 0; i < chatBox.length; i++) {
         //Update DOM
-        $("#chatBox").html(chatBox);
+        $("#chatBox").append(`${chatBox[i]}<br>`);
     }
     //Initialize jQuery
     $(document).ready(function() {
-        chatListener();
+        // chatListener();
 
-        function chatListener() {
+        // function chatListener() {
             $("#chatSend").on("click", function() {
-                var chatKey = db.ref("/game/chatBox/").push($("#chatInput").val());
+                if ($("#chatInput").val() == "") {
+                    alert("Please insert chat message!");
+                } else {
+                //set delay on click listener - 500ms
+                var chatKey = db.ref("/game/chatBox/").push(`${currentPlayerName} wrote: ${$("#chatInput").val()}`);
                 console.log(chatKey);
-                debugger;
+                // debugger;
                 $("#chatInput").val("");
+                }
             });
-        };//end chatListener()    
+        // };//end chatListener()    
     });//end jQuery
 });//end Chatbox call-back
 
@@ -117,22 +126,31 @@ db.ref("/game").on("value", function(snap) {
         function availabilityLogic() {
             if (statusA !== 0 && statusB !== 0) {
                 setFirebase('gamePrompt/', `Game is currently full`);
+                $("#playerContainer").hide();
             }
             else if (statusA == 0) {
                 //playerA is available - set up new player here
                 //Set status to 1 (in use)
+                $("#playerContainer").show();
+                $("#bSelections").hide();
                 setFirebase('playerA/status',1);
                 //Prompt for username and set to firebase - update on DOM
                 setFirebase('playerA/name',prompt("Enter your name:"));
                 $("#playerA-name").text(playerAname);
+                $("#stats-playerA-name").text(playerAname);
+                currentPlayerName = playerAname;
             }
             else if (statusB == 0) {
                 //playerB is available - set up new player here
                 //Set status to 1 (in use)
+                $("#playerContainer").show();
+                $("#aSelections").hide();
                 setFirebase('playerB/status',1);
                 //Prompt for username and set to firebase - update on DOM
                 setFirebase('playerB/name',prompt("Enter your name:"));
                 $("#playerB-name").text(playerBname);
+                $("#stats-playerB-name").text(playerBname);
+                currentPlayerName = playerBname;
             };
             statusChecked = true;
         }//end availabilityLogic()
@@ -222,9 +240,6 @@ db.ref("/game").on("value", function(snap) {
                     setFirebase('playerB/losses', lossB);
                     setFirebase('gamePrompt/', `${playerAname} wins this round!`)
                 };
-
-                $("#aPick").text("");
-                $("#bPick").text("");
             }
         }// end evaluatePicks()
 
@@ -251,6 +266,8 @@ db.ref("/game").on("value", function(snap) {
             resetFirebase();
             statusChecked = false;
             inputChecked = false;
+            currentPlayerName = "";
+            chatBox = [];
         });
     });//end jQuery ready
     

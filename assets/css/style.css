@@ -1,11 +1,17 @@
 * {
     padding: 0;
     margin: 0;
-    font-size: 1.5rem;
     font-family: Helvetica, sans-serif;
+    font-size: 16pt;
 }
 
 body {
+    background-color: #DDD;
+}
+
+header h1 {
+    font-family: 'Bungee Outline', cursive;
+    font-size: 36pt;
 }
 
 #mainContainer {
@@ -19,6 +25,9 @@ body {
     border: rgba(255, 255, 255, .2);
     box-shadow: 0 1px 3px 1px rgba(60, 64, 67, .3);
     border-radius: 8px;
+    margin-left: 5%;
+    margin-right: 5%;
+    background-color: #FFF;
 }
 
 .promptHeader {
@@ -41,6 +50,7 @@ body {
         box-shadow: 0 1px 3px 1px rgba(60, 64, 67, .3);
         border-radius: 8px;
         min-width: 300px;
+        background-color: #FFF;
     }
 
     .gameHeader {
@@ -58,15 +68,9 @@ body {
         cursor: pointer;
     }
 
-    .btnInnerLeft {
-        height: 100px;
-        width: 100px;
-        justify-items: center;
-        background: red;
-    }
-
     .selectionBtn:hover {
-        background-color: rgb(170, 170, 170);
+        background-color: rgb(200, 252, 116);
+        border-radius: 10px;
     }
 
     .playerSelections {
@@ -87,6 +91,7 @@ body {
         box-shadow: 0 1px 3px 1px rgba(60, 64, 67, .3);
         border-radius: 8px;
         width: 100%;
+        background-color: #FFF;
     }
 
     .statsHeader {
@@ -97,14 +102,55 @@ body {
         padding: 10px;
     }
 
-    #resetBtn {
-        max-width: 250px;
-        padding: 20px;
+    #chatBoxWrapper {
+        display: flex;
+        flex-direction: column;
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top: 20px;
+    }
+
+    #chatBox {
+        border: 2px solid #CCC;
+        height: 100px;
+        text-align: left;
+        padding: 5px;
+        border-radius: 7px;
+        overflow: scroll;
+    }
+
+    #input-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    #chatInput {
+        width: 100%;
+        margin-right: 10px;
+        border-radius: 7px;
+    }
+
+    #chatSend {
+        padding: 5px;
         background-color: yellowgreen;
         color: white;
         cursor: pointer;
+        border-radius: 7px;
     }
 
-    #resetBtn:hover {
+    #resetBtn {
+        max-width: 250px;
+        padding: 10px;
+        background-color: yellowgreen;
+        color: white;
+        cursor: pointer;
+        border-radius: 7px;
+    }
+
+    #resetBtn:hover, #chatSend:hover {
         background-color: rgb(108, 139, 46);
     }
